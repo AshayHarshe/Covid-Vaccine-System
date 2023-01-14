@@ -1,0 +1,138 @@
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-lg-12 text-left ms-5 mt-5">
+      <h1>Covid Vaccination System</h1>
+    </div>
+  </div>
+
+  <div class="alert alert-success" *ngIf="showMessage == true ">
+    <strong>Success!</strong> Candidate added Successfully.
+  </div>
+
+  <div class="row mt-1 p-5">
+    <div class="col-lg-3">
+      <h2 style="color: black;">Candidate List
+        <i class='fas fa-user-friends' (click)="openModal(template, 'null')"  
+        style='font-size:35px;color:rgb(81, 135, 81); float: right; margin-top: 1px;  margin-right: 30px; text-shadow: 3px 3px rgb(177, 222, 177); '>
+      </i>
+      </h2>
+      <ol class="list-group list-group-numbered">
+        <li class="list-group-item" *ngFor="let Candidate of CandidateList;let i=index" > {{ Candidate.name | titlecase }} - 
+          <span class="badge" [ngClass]="Candidate.status ==  'Available' ? 'bg-success' : 'bg-secondary' ">{{Candidate.status}}</span>
+          <!-- <span class="badge bg-secondary">{{Candidate.status}}</span> -->
+          <button class="btn btn-primary float-right" (click)="D1Done(i)" >ADD &nbsp; <i class="fa fa-plus" style="font-size:16px;color:yellow; "></i></button>
+          <!-- <button class="btn btn-warning float-right" (click)="openModal(edittemplate,i)" >Edit</button> -->
+          <i class="fas fa-edit" (click)="openModal(edittemplate,i)"  style="color: rgb(132, 132, 62); float: right; margin-right: 20px; margin-top: 10px; text-shadow: 2px 1px rgb(177, 222, 177); "></i>
+          <i class="fa fa-trash" (click)="Trash(i)" style="color: red; float: right; margin-right: 15px; margin-top: 10px; text-shadow: 3px 3px rgb(177, 222, 177); "></i></li>
+      </ol>
+    </div>
+    
+    <div class="col-lg-3">
+      <h2>Dose 1</h2>
+      <ol class="list-group list-group-numbered">
+        <li class="list-group-item" *ngFor="let Candidate of D1Candidates;let i=index">  {{ Candidate.name | titlecase }} 
+          <button class="btn btn-primary float-right" (click)="D2Done(i)">D1 <i class="fa fa-check" style="font-size:16px;color:yellow"></i></button>
+          <i class="fa fa-undo" (click)="cBack(i)" style="color: red; float: right; margin-right: 15px; margin-top: 10px;  text-shadow: 3px 3px rgb(177, 222, 177); "></i></li>
+      </ol>
+    </div>
+    <div class="col-lg-3">
+      <h2>Dose 2</h2>
+      <ol class="list-group list-group-numbered">
+        <li class="list-group-item" *ngFor="let Candidate of D2Candidates;let i=index">  {{ Candidate.name | titlecase  }}
+          <button class="btn btn-primary float-right" (click)="BDone(i)">D2 <i class="fa fa-check" style="font-size:16px;color:yellow"></i></button>
+          <i class="fa fa-undo" (click)="D1Back(i)" style="color: red; float: right; margin-right: 15px;  margin-top: 10px;  text-shadow: 3px 3px rgb(177, 222, 177); "></i></li>
+      </ol>
+    </div>
+    <div class="col-lg-3">
+      <h2>Booster Dose</h2>
+      <ol class="list-group list-group-numbered">
+        <li class="list-group-item" *ngFor="let Candidate of BCandidates;let i=index"> {{ Candidate.name | titlecase  }}
+          <i class="fa fa-undo" (click)="D2Back(i)" style="color: red; float: right; margin-right: 15px;  margin-top: 10px;  text-shadow: 3px 3px rgb(177, 222, 177); "></i>
+        </li>
+      </ol>
+    </div>
+  </div>
+
+
+    <!-- The modal -->
+
+<ng-template #template>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">
+      <i class='fas fa-user-plus'style="font-size:30px; color:rgb(81, 135, 81); text-shadow: 3px 3px rgb(177, 222, 177); margin-left: 30px"></i>
+      &nbsp;
+      Add New Candidates  
+      </h4>
+    <button type="button" class="btn-close close pull-right" aria-label="Close" (click)="modalRef?.hide()">
+      <span aria-hidden="true" class="visually-hidden">&times;</span>
+    </button>
+  </div>
+  
+  <!-- Modal body  -->
+  <div class="modal-body">
+    <div class="mb-3 mt-3">
+      <label for="text" class="form-label">Candidate Name :-</label>
+      <input type="text" class="form-control" placeholder="Enter candidate name" [(ngModel)]="CandidateName" >
+    </div>
+
+    <div class="mb-3 mt-3">
+      <label for="text" class="form-label">Age of Candidate :-</label>
+      <input type="number" class="form-control" placeholder="Enter candidate age" [(ngModel)]="CandidateAge" >
+    </div>
+
+    <div class="mb-3 mt-3">
+      <label for="text" class="form-label">Contact Details :-</label>
+      <input type="number" class="form-control" placeholder="Enter mobile no." [(ngModel)]="CandidatePhone" >
+    </div>
+
+  </div>
+
+   <!-- Modal footer  -->
+  <div class="modal-footer">
+    <button type="button" class="btn btn-danger" (click)="modalRef?.hide()">Close</button>
+    <button type="submit" class="btn btn-success" [disabled]="CandidateName == '' " (click)="Submit()" data-bs-dismiss="modal">Submit</button>
+  </div>
+
+
+</ng-template>
+
+<ng-template #edittemplate>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">
+      &nbsp;
+      <i class="fa fa-edit" style='font-size:25px;color:rgb(62, 101, 62); text-shadow: 3px 3px rgb(177, 222, 177);'></i>
+      Edit Candidate 
+      </h4>
+    <button type="button" class="btn-close close pull-right" aria-label="Close" (click)="close()">
+      <span aria-hidden="true" class="visually-hidden">&times;</span>
+    </button>
+  </div>
+  
+  <!-- Modal body  -->
+  <div class="modal-body">
+    <div class="mb-3 mt-3">
+      <label for="text" class="form-label">Candidate Name :-</label>
+      <input type="text" class="form-control" placeholder="Enter candidate name" [(ngModel)]="CandidateName" >
+    </div>
+
+    <div class="mb-3 mt-3">
+      <label for="text" class="form-label">Age of Candidate :-</label>
+      <input type="number" class="form-control" placeholder="Enter candidate age" [(ngModel)]="CandidateAge" >
+    </div>
+
+    <div class="mb-3 mt-3">
+      <label for="text" class="form-label">Contact Details :-</label>
+      <input type="number" class="form-control" placeholder="Enter mobile no." [(ngModel)]="CandidatePhone" >
+    </div>
+
+  </div>
+
+   <!-- Modal footer  -->
+  <div class="modal-footer">
+    <button type="button" class="btn btn-danger" (click)="close()">Close</button>
+    <button type="submit" class="btn btn-success" [disabled]="CandidateName == '' " (click)="Update()">Update</button>
+  </div>
+
+
+</ng-template>
